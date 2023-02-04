@@ -1,0 +1,14 @@
+{
+    "name": "Tuck Yo homies in Bot",
+    "version": "1.0.0",
+    "description": "A discord bot that tucks in users",
+    "scripts": {
+      "start": "node main.js"
+    },
+    "dependencies": {
+      "discord.js": "^12.3.1"
+    },
+    "author": "Jamesplaysgamez",
+    "license": "Tuckin yo homies in requires no legal permissions"
+  }
+  
