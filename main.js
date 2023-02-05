@@ -64,9 +64,17 @@ client.on('messageCreate', message => {
       message.channel.send(`<@${member.id}>, it's now ${time}! Time for bed! 🛌😴`);
     }, calculateTimeDifference(time));
   }
+// !mybedtime command
+else if (message.content.startsWith('!mybedtime')) {
+  const member = message.member;
+  if (!member.bedtime) {
+    return message.reply(`You haven't set your bedtime yet! Use the !bedtime command to set your bedtime.`);
+  }
+  message.reply(`Your bedtime is set for ${member.bedtime}.`);
+}
 });
 
-// Function to calculate the difference between the current time and the requested bedtime
+// Function to calculate the difference between the current time and the requested bedtime.
 function calculateTimeDifference(time) {
   const currentTime = new Date();
   const bedtime = new Date();
