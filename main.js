@@ -1,6 +1,10 @@
+// Import dotenv, and Discord API
+
 require('dotenv').config()
 const Discord = require('discord.js');
 const { Client, GatewayIntentBits } = require('discord.js');
+
+// Declare Intents with Discord API
 
 const client = new Client({
 	intents: [
@@ -11,61 +15,49 @@ const client = new Client({
     Discord.GatewayIntentBits.DirectMessages
 	],
 });
+
+// Stores bot prefix and confirms bot is online in console.
+
 const prefix = "!";
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
   });
 
-// client.on('messageCreate', message => {
-//   //console.log(`Received message: ${message.content}`)
-//   if (message.content === '!tuckin') {
-//     const member = message.mentions.members.first();
-//     console.log(message.mentions.members);
-//     if (!member) {
-//       return message.reply('You need to mention a user to tuck them in.');
-//     }
-//     message.channel.send(`${member} has been tucked in! 🛌😴`);
-//   }
-// });
-
-// client.on('messageCreate', message => {
-//   console.log(`Received message: ${message.content}`)
-//   if (message.content.startsWith('!tuckin')) {
-//     if (!message.mentions.members.size) {
-//       return message.reply('You need to mention a user to tuck them in.');
-//     }
-//     const member = message.mentions.members.first();
-//     console.log(member);
-//     message.channel.send(`${member} has been tucked in! 🛌😴`);
-//   }
-// });
-
+  // Reads for message event from discord API, checks for command, then executes the command.
 client.on('messageCreate', message => {
-  // console.log(`Received message: ${message.content}`)
+  // !tuckin command
   if (message.content.startsWith('!tuckin')) {
     if (!message.mentions.members.size) {
       return message.reply('You need to mention a user to tuck them in.');
     }
     const member = message.mentions.members.first();
-    // console.log(member);
     message.channel.send(`${member} has been tucked in! 🛌😴`);
-  } else if (message.content.startsWith('!smooch')) {
+  }
+  // !smooch command
+   else if (message.content.startsWith('!smooch')) {
     if (!message.mentions.members.size) {
       return message.reply('You need to mention a user to kiss them on the forehead.');
     }
     const member = message.mentions.members.first();
-    // console.log(member);
     message.channel.send(`${member} has been kissed on the forehead! 😘😴`);
-  } else if (message.content.startsWith('!help')) {
+  }
+  // !help command
+  else if (message.content.startsWith('!help')) {
     message.reply(`Commands:
 - !tuckin [mention]: Tucks in the mentioned user
 - !smooch [mention]: Kisses the mentioned user on the forehead
-- !bedtime [HH:MM]: Sets a users bedtime and reminds them when its time for bed!`);
-  } else if (message.content.startsWith('!bedtime')) {
+- !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed!`);
+  }
+  // !bedtime command
+  else if (message.content.startsWith('!bedtime')) {
     const member = message.member;
     const time = message.content.split(" ")[1];
+    const timeRegex = /^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
     if (!time) {
       return message.reply('You need to specify a time to set your bedtime.');
+    }
+    if (!timeRegex.test(time)) {
+      return message.reply('The time should be in the format [HH:MM]');
     }
     message.reply(`Your bedtime has been set for ${time}.`);
     setTimeout(() => {
@@ -74,6 +66,7 @@ client.on('messageCreate', message => {
   }
 });
 
+// Function to calculate the difference between the current time and the requested bedtime.
 function calculateTimeDifference(time) {
   const currentTime = new Date();
   const bedtime = new Date();
@@ -89,8 +82,5 @@ function calculateTimeDifference(time) {
     return timeDifference;
     }
 }
+
 client.login(process.env.DISCORD_TOKEN);
-
-
-
-
