@@ -66,7 +66,7 @@ client.on('messageCreate', message => {
   }
 });
 
-// Function to calculate the difference between the current time and the requested bedtime.
+// Function to calculate the difference between the current time and the requested bedtime
 function calculateTimeDifference(time) {
   const currentTime = new Date();
   const bedtime = new Date();
