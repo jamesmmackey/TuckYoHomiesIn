@@ -81,6 +81,7 @@ else if (message.content.startsWith('!kisscount')) {
     message.reply(`Commands:
 - !tuckin [mention]: Tucks in the mentioned user
 - !smooch [mention]: Kisses the mentioned user on the forehead
+- !nightlight: Have the bot turn a lamp on for you!
 - !kisscount: Displays a leaderboard of members in the server who have been smooched! 
 - !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed!
 - !mybedtime: Shows the users current set bedtime
@@ -132,6 +133,24 @@ else if (message.content.startsWith('!story')) {
   const randomIndex = Math.floor(Math.random() * storyMessages.length);
   message.channel.send(storyMessages[randomIndex]);
 }
+
+else if (message.content.startsWith('!nightlight')) {
+  return message.reply("```\n" +
+  "#########::::::::::########\n" +
+  "##########::::::::#########\n" +
+  "###########::::::##########\n" +
+  "###########,---.###########\n" +
+  "##########/`---'\##########\n" +
+  "#########/       \#########\n" +
+  "########/         \########\n" +
+  "#######:`-._____.-':#######\n" +
+  "######::::: ( ) |::::######\n" +
+  "#####:::::: ) ( o:::::#####\n" +
+  "####::::: .-(_)-. :::::####\n" +
+  "###:::::: '=====' ::::::###\n" +
+  "###########################\n" +
+  "```");
+}
 })
 // Function to calculate the difference between the current time and the requested bedtime.
 function calculateTimeDifference(time) {
@@ -151,3 +170,5 @@ function calculateTimeDifference(time) {
 }
 
 client.login(process.env.DISCORD_TOKEN);
+
+
