@@ -122,18 +122,20 @@ else if (message.content.startsWith('!clearbedtime')) {
   message.reply("Your bedtime has been cleared.");
 }
 
-else if (message.content.startsWith('!story')) {
-  const storyMessages = [
-    "Once upon a time, there was a little girl named Little Red Riding Hood...",
-    "In a faraway kingdom, there lived a young prince who was cursed by a wicked witch...",
-    "A long, long time ago, there was a kind and generous king who ruled over a peaceful kingdom...",
-    "There was once a brave knight who set out on a quest to defeat a terrible dragon...",
-    "Deep in the heart of a dense forest, there lived a wise old owl who loved to tell stories..."
-  ];
-  const randomIndex = Math.floor(Math.random() * storyMessages.length);
-  message.channel.send(storyMessages[randomIndex]);
-}
+// Future !story command. Awaiting good bedtime stories.
+// else if (message.content.startsWith('!story')) {
+//   const storyMessages = [
+//     "Once upon a time, there was a little girl named Little Red Riding Hood...",
+//     "In a faraway kingdom, there lived a young prince who was cursed by a wicked witch...",
+//     "A long, long time ago, there was a kind and generous king who ruled over a peaceful kingdom...",
+//     "There was once a brave knight who set out on a quest to defeat a terrible dragon...",
+//     "Deep in the heart of a dense forest, there lived a wise old owl who loved to tell stories..."
+//   ];
+//   const randomIndex = Math.floor(Math.random() * storyMessages.length);
+//   message.channel.send(storyMessages[randomIndex]);
+// }
 
+// Nightlight command
 else if (message.content.startsWith('!nightlight')) {
   return message.reply("```\n" +
   "#########::::::::::########\n" +
