@@ -1,7 +1,6 @@
 // Import dotenv, and Discord API
 
 require('dotenv').config()
-const { EpicFreeGames } = require('epic-free-games');
 const Discord = require('discord.js');
 const { Client, GatewayIntentBits } = require('discord.js');
 
