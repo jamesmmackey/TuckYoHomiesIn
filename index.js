@@ -151,6 +151,7 @@ else if (message.content.startsWith(`${prefix}leaderboard`)) {
 - !bigtext: Makes your message bigger!
 - !coinflip: Flip a coin!
 - !magic8ball: Ask the Magic 8-Ball a question!
+- !choose: Chooses something off a list for you!
 - !leaderboard: Displays a leaderboard for everyone in the running for Most Affectionate Homie! 
 - !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed!
 - !mybedtime: Shows the users current set bedtime
@@ -278,6 +279,21 @@ else if (message.content.startsWith(`${prefix}magic8ball`)) {
   const response = responses[Math.floor(Math.random() * responses.length)];
   message.channel.send(`🎱 ${response}`);
 }
+
+// !choose command
+else if (message.content.startsWith(`${prefix}choose`)) {
+  const args = message.content.slice(prefix.length + 7).trim();
+  if (!args.length) {
+    return message.reply('Please provide a list of things separated by commas.');
+  }
+  const choices = args.split(',').map(choice => choice.trim().replace('or', ''));
+  if (!choices.length) {
+    return message.reply('Please provide a valid list of things separated by commas.');
+  }
+  const chosen = choices[Math.floor(Math.random() * choices.length)];
+  message.channel.send(`🎲 I choose... ${chosen}`);
+}
+
 
 })
 // Function to calculate the difference between the current time and the requested bedtime.
