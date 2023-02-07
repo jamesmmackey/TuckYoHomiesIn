@@ -21,7 +21,7 @@ const client = new Client({
 
 // Stores bot prefix and confirms bot is online in console.
 
-const prefix = "!";
+let prefix = "!";
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
   });
@@ -29,8 +29,22 @@ client.on("ready", () => {
   
   // Reads for message event from discord API, checks for command, then executes the command.
 client.on('messageCreate', message => {
+
+  if (message.content.startsWith(`!prefix`)) {
+    if (message.content.split(" ").length != 2) {
+      return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
+    }
+    const newPrefix = message.content.split(" ")[1];
+    if (newPrefix.length != 1 || /^\w/.test(newPrefix)) {
+      return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
+    }
+    prefix = newPrefix;
+    message.reply(`Prefix changed to ${prefix}`);
+  }
+
+
  // !tuckin command
-if (message.content.startsWith('!tuckin')) {
+else if (message.content.startsWith(`${prefix}tuckin`)) {
   if (!message.mentions.members.size) {
     return message.reply('You need to mention a user to tuck them in.');
   }
@@ -49,7 +63,7 @@ if (message.content.startsWith('!tuckin')) {
   message.channel.send(goodnightMessages[randomIndex]);
 }
   // !smooch command
-else if (message.content.startsWith('!smooch')) {
+else if (message.content.startsWith(`${prefix}smooch`)) {
   if (!message.mentions.members.size) {
     return message.reply('You need to mention a user to kiss them on the forehead.');
   }
@@ -67,7 +81,7 @@ else if (message.content.startsWith('!smooch')) {
   message.channel.send(`${member} has been kissed on the forehead ${kisscount[member.id]} times! 😘😴`);
 }
 // !smoochleaderboard command
-else if (message.content.startsWith('!kisscount')) {
+else if (message.content.startsWith(`${prefix}kisscount`)) {
   const leaderboard = Object.entries(kisscount)
     .sort((a, b) => b[1] - a[1])
     .map(([id, count], i) => `${i + 1}. <@${id}> has ${count} kisses`)
@@ -76,7 +90,7 @@ else if (message.content.startsWith('!kisscount')) {
   message.channel.send(`Kiss Leaderboard:\n${leaderboard}`);
 }
   // !help command
-  else if (message.content.startsWith('!help')) {
+  else if (message.content.startsWith(`${prefix}help`)) {
     message.reply(`Commands:
 - !tuckin [mention]: Tucks in the mentioned user
 - !smooch [mention]: Kisses the mentioned user on the forehead
@@ -87,7 +101,7 @@ else if (message.content.startsWith('!kisscount')) {
 - !clearbedtime: Clears a users current bedtime (Be careful, you gotta get your rest!)`);
   }
 // Add the bedtime for a user when the !bedtime command is received
-else if (message.content.startsWith('!bedtime')) {
+else if (message.content.startsWith(`${prefix}bedtime`)) {
   const member = message.member;
   const time = message.content.split(" ")[1];
   const timeRegex = /^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
@@ -105,14 +119,14 @@ else if (message.content.startsWith('!bedtime')) {
 }
 
 // Return the bedtime for the user when the !mybedtime command is received
-else if (message.content.startsWith('!mybedtime')) {
+else if (message.content.startsWith(`${prefix}mybedtime`)) {
   const member = message.member;
   if (!bedtimes[member.id]) {
     return message.reply("You haven't set your bedtime yet! Use the !bedtime command to set your bedtime.");
   }
   message.reply(`Your bedtime is set for ${bedtimes[member.id]}`);
 }
-else if (message.content.startsWith('!clearbedtime')) {
+else if (message.content.startsWith(`${prefix}clearbedtime`)) {
   const member = message.member;
   if (!bedtimes[member.id]) {
     return message.reply("You haven't set your bedtime yet!");
@@ -122,7 +136,7 @@ else if (message.content.startsWith('!clearbedtime')) {
 }
 
 // Future !story command. Awaiting good bedtime stories.
-// else if (message.content.startsWith('!story')) {
+// else if (message.content.startsWith(`${prefix}story`)) {
 //   const storyMessages = [
 //     "Once upon a time, there was a little girl named Little Red Riding Hood...",
 //     "In a faraway kingdom, there lived a young prince who was cursed by a wicked witch...",
@@ -135,7 +149,7 @@ else if (message.content.startsWith('!clearbedtime')) {
 // }
 
 // Nightlight command
-else if (message.content.startsWith('!nightlight')) {
+else if (message.content.startsWith(`${prefix}nightlight`)) {
   return message.reply("```\n" +
   "#########::::::::::########\n" +
   "##########::::::::#########\n" +
