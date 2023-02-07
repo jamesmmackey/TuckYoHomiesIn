@@ -150,6 +150,7 @@ else if (message.content.startsWith(`${prefix}leaderboard`)) {
 - !nightlight: Have the bot turn a lamp on for you!
 - !bigtext: Makes your message bigger!
 - !coinflip: Flip a coin!
+- !magic8ball: Ask the Magic 8-Ball a question!
 - !leaderboard: Displays a leaderboard for everyone in the running for Most Affectionate Homie! 
 - !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed!
 - !mybedtime: Shows the users current set bedtime
@@ -251,6 +252,32 @@ else if (message.content.startsWith(`${prefix}coinflip`)) {
   message.channel.send(`The coin landed on ${flip}!`);
 }
 
+// !magic8ball command
+else if (message.content.startsWith(`${prefix}magic8ball`)) {
+  const responses = [
+    "It is certain.",
+    "It is decidedly so.",
+    "Without a doubt.",
+    "Yes - definitely.",
+    "You may rely on it.",
+    "As I see it, yes.",
+    "Most likely.",
+    "Outlook good.",
+    "Yes.",
+    "Signs point to yes.",
+    "Reply hazy, try again.",
+    "Better not tell you now.",
+    "Cannot predict now.",
+    "Concentrate and ask again.",
+    "Don't count on it.",
+    "My reply is no.",
+    "My sources say no.",
+    "Outlook not so good.",
+    "Very doubtful."
+  ];
+  const response = responses[Math.floor(Math.random() * responses.length)];
+  message.channel.send(`🎱 ${response}`);
+}
 
 })
 // Function to calculate the difference between the current time and the requested bedtime.
