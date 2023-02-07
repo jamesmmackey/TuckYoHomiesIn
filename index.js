@@ -4,6 +4,7 @@ require('dotenv').config()
 const Discord = require('discord.js');
 const { Client, GatewayIntentBits } = require('discord.js');
 
+
 // Declare a variable to store the bedtime for each user and a variable for the number of times kissed. 
 let bedtimes = {};
 let kisscount = {};
@@ -32,21 +33,21 @@ client.on("ready", () => {
 client.on('messageCreate', message => {
 
   // Command to change prefix
-  // if (message.content.startsWith(`!prefix`)) {
-  //   if (message.content.split(" ").length != 2) {
-  //     return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
-  //   }
-  //   const newPrefix = message.content.split(" ")[1];
-  //   if (newPrefix.length != 1 || /^\w/.test(newPrefix)) {
-  //     return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
-  //   }
-  //   prefix = newPrefix;
-  //   message.reply(`Prefix changed to ${prefix}`);
-  // }
+  if (message.content.startsWith(`!prefix`)) {
+    if (message.content.split(" ").length != 2) {
+      return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
+    }
+    const newPrefix = message.content.split(" ")[1];
+    if (newPrefix.length != 1 || /^\w/.test(newPrefix)) {
+      return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
+    }
+    prefix = newPrefix;
+    message.reply(`Prefix changed to ${prefix}`);
+  }
 
 
  // !tuckin command
-else if (message.content.startsWith(`${prefix}tuckin`)) {
+ else if (message.content.startsWith(`${prefix}tuckin`)) {
   if (!message.mentions.members.size) {
     return message.reply('You need to mention a user to tuck them in.');
   }
@@ -147,6 +148,7 @@ else if (message.content.startsWith(`${prefix}leaderboard`)) {
 - !tuckin [mention]: Tucks in the mentioned user
 - !smooch [mention]: Kisses the mentioned user on the forehead
 - !nightlight: Have the bot turn a lamp on for you!
+- !bigtext: Makes your message bigger!
 - !leaderboard: Displays a leaderboard for everyone in the running for Most Affectionate Homie! 
 - !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed!
 - !mybedtime: Shows the users current set bedtime
@@ -218,6 +220,31 @@ else if (message.content.startsWith(`${prefix}nightlight`)) {
   "###########################\n" +
   "```");
 }
+
+// !bigtext command
+else if (message.content.startsWith(`${prefix}bigtext`)) {
+  const text = message.content.substring(`${prefix}bigtext`.length).trim();
+  if (!text) {
+    return message.reply('You need to enter some text to format.');
+  }
+
+  let bigText = '';
+  for (let i = 0; i < text.length; i++) {
+    if (/[a-zA-Z0-9]/.test(text[i])) {
+      bigText += `:regional_indicator_${text[i].toLowerCase()}:`;
+    } else if (text[i] === ' ') {
+      bigText += '  ';
+    } else if (text[i] === '?') {
+      bigText += ':question:';
+    } else if (text[i] === '!') {
+      bigText += ':exclamation:';
+    }
+  }
+
+  message.channel.send(bigText);
+}
+
+
 })
 // Function to calculate the difference between the current time and the requested bedtime.
 function calculateTimeDifference(time) {
