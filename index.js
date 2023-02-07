@@ -7,6 +7,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 // Declare a variable to store the bedtime for each user and a variable for the number of times kissed. 
 let bedtimes = {};
 let kisscount = {};
+let tuckcount = {};
 // Declare Intents with Discord API
 
 const client = new Client({
@@ -30,17 +31,18 @@ client.on("ready", () => {
   // Reads for message event from discord API, checks for command, then executes the command.
 client.on('messageCreate', message => {
 
-  if (message.content.startsWith(`!prefix`)) {
-    if (message.content.split(" ").length != 2) {
-      return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
-    }
-    const newPrefix = message.content.split(" ")[1];
-    if (newPrefix.length != 1 || /^\w/.test(newPrefix)) {
-      return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
-    }
-    prefix = newPrefix;
-    message.reply(`Prefix changed to ${prefix}`);
-  }
+  // Command to change prefix
+  // if (message.content.startsWith(`!prefix`)) {
+  //   if (message.content.split(" ").length != 2) {
+  //     return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
+  //   }
+  //   const newPrefix = message.content.split(" ")[1];
+  //   if (newPrefix.length != 1 || /^\w/.test(newPrefix)) {
+  //     return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
+  //   }
+  //   prefix = newPrefix;
+  //   message.reply(`Prefix changed to ${prefix}`);
+  // }
 
 
  // !tuckin command
@@ -60,42 +62,92 @@ else if (message.content.startsWith(`${prefix}tuckin`)) {
     `${member}, may both sides of your pillow be cold. 🛏️💤`, 
   ];
   const randomIndex = Math.floor(Math.random() * goodnightMessages.length);
+  if (!tuckcount[message.author.id]) {
+    tuckcount[message.author.id] = 1;
+  } else {
+    tuckcount[message.author.id]++;
+  }
   message.channel.send(goodnightMessages[randomIndex]);
 }
   // !smooch command
-else if (message.content.startsWith(`${prefix}smooch`)) {
-  if (!message.mentions.members.size) {
-    return message.reply('You need to mention a user to kiss them on the forehead.');
+  else if (message.content.startsWith(`${prefix}smooch`)) {
+    if (!message.mentions.members.size) {
+      return message.reply('You need to mention a user to kiss them on the forehead.');
+    }
+    const member = message.mentions.members.first();
+  
+    if (member.id === message.author.id) {
+      return message.reply("You can't kiss yourself on the forehead!");
+    }
+  
+    if (!kisscount[message.author.id]) {
+      kisscount[message.author.id] = 1;
+    } else {
+      kisscount[message.author.id]++;
+    }
+    message.channel.send(`${message.author} has given ${member} a kiss on the forehead! 😘😴`);
   }
-  const member = message.mentions.members.first();
 
-  if (member.id === message.author.id) {
-    return message.reply("You can't kiss yourself on the forehead!");
-  }
+// !leaderboard command
+else if (message.content.startsWith(`${prefix}leaderboard`)) {
+  let kissleaderboard = '';
+  let tuckleaderboard = '';
 
-  if (!kisscount[member.id]) {
-    kisscount[member.id] = 1;
+  if (Object.keys(kisscount).length > 0) {
+    kissleaderboard = Object.entries(kisscount)
+      .sort((a, b) => b[1] - a[1])
+      .map(([id, count], i) => `${i + 1}. <@${id}> has given out ${count} kisses`)
+      .join('\n');
   } else {
-    kisscount[member.id]++;
+    kissleaderboard = 'No entries in the kiss leaderboard';
   }
-  message.channel.send(`${member} has been kissed on the forehead ${kisscount[member.id]} times! 😘😴`);
-}
-// !smoochleaderboard command
-else if (message.content.startsWith(`${prefix}kisscount`)) {
-  const leaderboard = Object.entries(kisscount)
-    .sort((a, b) => b[1] - a[1])
-    .map(([id, count], i) => `${i + 1}. <@${id}> has ${count} kisses`)
-    .join('\n');
 
-  message.channel.send(`Kiss Leaderboard:\n${leaderboard}`);
+  if (Object.keys(tuckcount).length > 0) {
+    tuckleaderboard = Object.entries(tuckcount)
+      .sort((a, b) => b[1] - a[1])
+      .map(([id, count], i) => `${i + 1}. <@${id}> has tucked in ${count} homies`)
+      .join('\n');
+  } else {
+    tuckleaderboard = 'No entries in the tuck leaderboard';
+  }
+
+  let total = {};
+  for (const [id, kissCount] of Object.entries(kisscount)) {
+    if (!total[id]) {
+      total[id] = kissCount * 2;
+    } else {
+      total[id] += kissCount * 2;
+    }
+  }
+  for (const [id, tuckCount] of Object.entries(tuckcount)) {
+    if (!total[id]) {
+      total[id] = tuckCount;
+    } else {
+      total[id] += tuckCount;
+    }
+  }
+
+  let winner;
+  if (Object.keys(total).length > 0) {
+    const [id, score] = Object.entries(total)
+      .sort((a, b) => b[1] - a[1])
+      .reduce((a, b) => a[1] > b[1] ? a : b);
+    winner = client.users.cache.get(id);
+  } else {
+    winner = 'No entries in the total leaderboard';
+  }
+
+  message.channel.send(`**The Most Affectionate Homie is...🥁** <@${winner.id || winner}>!🎉🏆\n \nKiss Leaderboard💋:\n${kissleaderboard}\n\nTuck-in Leaderboard🛏️:\n${tuckleaderboard}`);
 }
+
+
   // !help command
   else if (message.content.startsWith(`${prefix}help`)) {
     message.reply(`Commands:
 - !tuckin [mention]: Tucks in the mentioned user
 - !smooch [mention]: Kisses the mentioned user on the forehead
 - !nightlight: Have the bot turn a lamp on for you!
-- !kisscount: Displays a leaderboard of members in the server who have been smooched! 
+- !leaderboard: Displays a leaderboard for everyone in the running for Most Affectionate Homie! 
 - !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed!
 - !mybedtime: Shows the users current set bedtime
 - !clearbedtime: Clears a users current bedtime (Be careful, you gotta get your rest!)`);
