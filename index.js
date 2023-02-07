@@ -149,6 +149,7 @@ else if (message.content.startsWith(`${prefix}leaderboard`)) {
 - !smooch [mention]: Kisses the mentioned user on the forehead
 - !nightlight: Have the bot turn a lamp on for you!
 - !bigtext: Makes your message bigger!
+- !coinflip: Flip a coin!
 - !leaderboard: Displays a leaderboard for everyone in the running for Most Affectionate Homie! 
 - !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed!
 - !mybedtime: Shows the users current set bedtime
@@ -242,6 +243,12 @@ else if (message.content.startsWith(`${prefix}bigtext`)) {
   }
 
   message.channel.send(bigText);
+}
+
+// !coinflip command
+else if (message.content.startsWith(`${prefix}coinflip`)) {
+  const flip = Math.floor(Math.random() * 2) === 0 ? 'heads' : 'tails';
+  message.channel.send(`The coin landed on ${flip}!`);
 }
 
 
