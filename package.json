@@ -10,8 +10,7 @@
         "axios": "^1.3.2",
         "dayjs": "^1.11.7",
         "discord.js": "^14.7.1",
-        "epic-free-games": "^4.0.1",
-        "giphy": "^0.0.4"
+        "epic-free-games": "^4.0.1"
     },
     "author": "Jamesplaysgamez",
     "license": "Tuckin yo homies in requires no legal permissions"
