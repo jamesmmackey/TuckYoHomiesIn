@@ -9,6 +9,8 @@ const { Client, GatewayIntentBits } = require('discord.js');
 let bedtimes = {};
 let kisscount = {};
 let tuckcount = {};
+const timeouts = {};
+
 // Declare Intents with Discord API
 
 const client = new Client({
@@ -153,11 +155,13 @@ else if (message.content.startsWith(`${prefix}leaderboard`)) {
 - !magic8ball: Ask the Magic 8-Ball a question!
 - !choose: Chooses something off a list for you!
 - !leaderboard: Displays a leaderboard for everyone in the running for Most Affectionate Homie! 
-- !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed!
+- !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed! Please ensure your input is in a 24 hr time format <4
 - !mybedtime: Shows the users current set bedtime
 - !clearbedtime: Clears a users current bedtime (Be careful, you gotta get your rest!)`);
   }
-// Add the bedtime for a user when the !bedtime command is received
+
+  
+// Add or update the bedtime for a user when the !bedtime command is received
 else if (message.content.startsWith(`${prefix}bedtime`)) {
   const member = message.member;
   const time = message.content.split(" ")[1];
@@ -168,29 +172,60 @@ else if (message.content.startsWith(`${prefix}bedtime`)) {
   if (!timeRegex.test(time)) {
     return message.reply('The time should be in the format [HH:MM]');
   }
+
+  // If user already has a bedtime set, delete the old timeout
+  const oldTimeoutId = timeouts[member.id];
+  if (oldTimeoutId) {
+    clearTimeout(oldTimeoutId);
+    delete timeouts[member.id];
+  }
+
   bedtimes[member.id] = time;
   message.reply(`Your bedtime has been set for ${time}.`);
-  setTimeout(() => {
+
+  // Calculate the time until bedtime in milliseconds
+  const now = new Date();
+  const timezoneOffset = now.getTimezoneOffset();
+  const bedtime = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), time.split(':')[0], time.split(':')[1], 0));
+  const timeUntilBedtime = bedtime.getTime() - (now.getTime() - timezoneOffset * 60 * 1000);
+
+  // Set a timeout to ping the user at bedtime and store the timeout ID
+  const timeoutId = setTimeout(() => {
     message.channel.send(`<@${member.id}>, it's now ${time}! Time for bed! 🛌😴`);
-  }, calculateTimeDifference(time));
+    delete bedtimes[member.id];
+    delete timeouts[member.id];
+  }, timeUntilBedtime);
+  timeouts[member.id] = timeoutId;
 }
 
-// Return the bedtime for the user when the !mybedtime command is received
+
+//!mybedtime command
 else if (message.content.startsWith(`${prefix}mybedtime`)) {
   const member = message.member;
   if (!bedtimes[member.id]) {
     return message.reply("You haven't set your bedtime yet! Use the !bedtime command to set your bedtime.");
   }
-  message.reply(`Your bedtime is set for ${bedtimes[member.id]}`);
+  const bedtime = bedtimes[member.id];
+
+  message.reply(`Your bedtime is set for ${bedtime} in your local timezone.`);
 }
+
+
+// Clear the bedtime for the user when the !clearbedtime command is received
 else if (message.content.startsWith(`${prefix}clearbedtime`)) {
   const member = message.member;
   if (!bedtimes[member.id]) {
     return message.reply("You haven't set your bedtime yet!");
   }
+  const timeoutId = timeouts[member.id];
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+    delete timeouts[member.id];
+  }
   delete bedtimes[member.id];
   message.reply("Your bedtime has been cleared.");
 }
+
 
 // Future !story command. Awaiting good bedtime stories.
 // else if (message.content.startsWith(`${prefix}story`)) {
@@ -295,23 +330,24 @@ else if (message.content.startsWith(`${prefix}choose`)) {
 }
 
 
+
 })
-// Function to calculate the difference between the current time and the requested bedtime.
-function calculateTimeDifference(time) {
-  const currentTime = new Date();
-  const bedtime = new Date();
-  bedtime.setHours(time.split(":")[0]);
-  bedtime.setMinutes(time.split(":")[1]);
-  bedtime.setSeconds(0);
-  bedtime.setMilliseconds(0);
-  const timeDifference = bedtime.getTime() - currentTime.getTime();
-  if (timeDifference < 0) {
-   const postimeDifference = timeDifference * -1;
-   return postimeDifference;}
-  else if (timeDifference > 0) {
-    return timeDifference;
-    }
-}
+// // Function to calculate the difference between the current time and the requested bedtime.
+// function calculateTimeDifference(time) {
+//   const currentTime = new Date();
+//   const bedtime = new Date();
+//   bedtime.setHours(time.split(":")[0]);
+//   bedtime.setMinutes(time.split(":")[1]);
+//   bedtime.setSeconds(0);
+//   bedtime.setMilliseconds(0);
+//   const timeDifference = bedtime.getTime() - currentTime.getTime();
+//   if (timeDifference < 0) {
+//    const postimeDifference = timeDifference * -1;
+//    return postimeDifference;}
+//   else if (timeDifference > 0) {
+//     return timeDifference;
+//     }
+// }
 
 client.login(process.env.DISCORD_TOKEN);
 
