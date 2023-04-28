@@ -35,21 +35,21 @@ client.on("ready", () => {
 client.on('messageCreate', message => {
 
   // Command to change prefix
-  if (message.content.startsWith(`!prefix`)) {
-    if (message.content.split(" ").length != 2) {
-      return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
-    }
-    const newPrefix = message.content.split(" ")[1];
-    if (newPrefix.length != 1 || /^\w/.test(newPrefix)) {
-      return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
-    }
-    prefix = newPrefix;
-    message.reply(`Prefix changed to ${prefix}`);
-  }
+  // if (message.content.startsWith(`!prefix`)) {
+  //   if (message.content.split(" ").length != 2) {
+  //     return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
+  //   }
+  //   const newPrefix = message.content.split(" ")[1];
+  //   if (newPrefix.length != 1 || /^\w/.test(newPrefix)) {
+  //     return message.reply("Please provide exactly one non-alphanumeric character as the new prefix.");
+  //   }
+  //   prefix = newPrefix;
+  //   message.reply(`Prefix changed to ${prefix}`);
+  // }
 
 
  // !tuckin command
- else if (message.content.startsWith(`${prefix}tuckin`)) {
+ if (message.content.startsWith(`${prefix}tuckin`)) {
   if (!message.mentions.members.size) {
     return message.reply('You need to mention a user to tuck them in.');
   }
@@ -155,7 +155,7 @@ else if (message.content.startsWith(`${prefix}leaderboard`)) {
 - !magic8ball: Ask the Magic 8-Ball a question!
 - !choose: Chooses something off a list for you!
 - !leaderboard: Displays a leaderboard for everyone in the running for Most Affectionate Homie! 
-- !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed! Please ensure your input is in a 24 hr time format <4
+- !bedtime HH:MM: Sets a users bedtime and reminds them when its time for bed! Please ensure your input is in a 24 hr time format and in the UTC timezone (Timezone support coming soon!)
 - !mybedtime: Shows the users current set bedtime
 - !clearbedtime: Clears a users current bedtime (Be careful, you gotta get your rest!)`);
   }
